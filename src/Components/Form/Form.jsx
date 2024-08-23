@@ -1,7 +1,17 @@
-import { Card, Input, Checkbox, Button, Typography, } from "@material-tailwind/react";
+import { Card, Input, Checkbox, Button, Typography, Textarea, } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
+import { useCountries } from "use-react-countries";
+import { Menu, MenuHandler, MenuList, MenuItem, } from "@material-tailwind/react";
+import { useState } from "react";
+import { Select, Option } from "@material-tailwind/react";
+
 
 const Form = () => {
+
+    const { countries } = useCountries();
+    const [country, setCountry] = useState(187);
+    const { name, flags, countryCallingCode } = countries[country];
+
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = (data) => {
@@ -11,15 +21,21 @@ const Form = () => {
     }
 
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center gap-3 bg-green-300">
+            {/* <div>
+                <Typography variant="h4" color="blue-gray">
+                    Welcome to Jj &apos;s Online Admission Portal! We are excited that you are considering joining our vibrant learning community. Please fill out the form below to apply for admission. Ensure all information provided is accurate to help us process your application efficiently. We look forward to having you with us.
+                </Typography>
+            </div> */}
             <Card color="transparent" shadow={false}>
                 <Typography variant="h4" color="blue-gray">
-                    Sign Up
+                    Register your sit now
                 </Typography>
                 <Typography color="gray" className="mt-1 font-normal">
                     Nice to meet you! Enter your details to register.
                 </Typography>
-                <form onSubmit={handleSubmit(onSubmit)} className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+                <form onSubmit={handleSubmit(onSubmit)} className="mt-8 mb-2 w-full ">
+                    {/* name and email field */}
                     <div className="mb-1 flex gap-6">
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
@@ -27,7 +43,7 @@ const Form = () => {
                             </Typography>
                             <Input
                                 size="lg"
-                                placeholder="name@mail.com"
+                                placeholder="Type Your Name"
                                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                                 labelProps={{
                                     className: "before:content-none after:content-none",
@@ -38,11 +54,41 @@ const Form = () => {
                         </div>
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
-                                Date of Birth
+                                Your Email
                             </Typography>
                             <Input
                                 size="lg"
                                 placeholder="name@mail.com"
+                                className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                                labelProps={{
+                                    className: "before:content-none after:content-none",
+                                }}
+                                {...register("email", { required: true })}
+                            />
+                            {errors.email && <span className="text-red-500">This field is required</span>}
+                        </div>
+                    </div>
+                    {/* gender and date of birth field */}
+                    <div className="mb-1 flex gap-6">
+                        <div>
+                            <Typography variant="h6" color="blue-gray" className="mb-1">
+                                Gender
+                            </Typography>
+                            <Select variant="outlined" label="Select Version"
+                                {...register("gender", { required: true })}>
+                                <Option>Male</Option>
+                                <Option>Female</Option>
+                                <Option>Other</Option>
+                            </Select>
+                            {errors.gender && <span className="text-red-500">This field is required</span>}
+                        </div>
+                        <div>
+                            <Typography variant="h6" color="blue-gray" className="mb-1">
+                                Date of Birth
+                            </Typography>
+                            <Input
+                                size="lg"
+                                placeholder="Type Your Date"
                                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                                 labelProps={{
                                     className: "before:content-none after:content-none",
@@ -50,13 +96,70 @@ const Form = () => {
                                 {...register("date", { required: true })}
                             />
                             {errors.date && <span className="text-red-500">This field is required</span>}
-
                         </div>
                     </div>
+                    {/* mobile number field */}
+                    <div>
+                        <Typography variant="h6" color="blue-gray" className="mb-1">
+                            Mobile Number
+                        </Typography>
+                        <div className=" flex w-full max-w-[36rem] mb-3">
+                            <Menu placement="bottom-start">
+                                <MenuHandler>
+                                    <Button
+                                        ripple={false}
+                                        variant="text"
+                                        color="blue-gray"
+                                        className="flex h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
+                                    >
+                                        <img
+                                            src={flags.svg}
+                                            alt={name}
+                                            className="h-4 w-4 rounded-full object-cover"
+                                        />
+                                        {countryCallingCode}
+                                    </Button>
+                                </MenuHandler>
+                                <MenuList className="max-h-[20rem] max-w-[18rem]">
+                                    {countries.map(({ name, flags, countryCallingCode }, index) => {
+                                        return (
+                                            <MenuItem
+                                                key={name}
+                                                value={name}
+                                                className="flex items-center gap-2"
+                                                onClick={() => setCountry(index)}
+                                            >
+                                                <img
+                                                    src={flags.svg}
+                                                    alt={name}
+                                                    className="h-5 w-5 rounded-full object-cover"
+                                                />
+                                                {name} <span className="ml-auto">{countryCallingCode}</span>
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </MenuList>
+                            </Menu>
+                            <Input
+                                type="tel"
+                                placeholder="Mobile Number"
+                                className="rounded-l-none !border-t-blue-gray-200 focus:!border-t-gray-900"
+                                labelProps={{
+                                    className: "before:content-none after:content-none",
+                                }}
+                                containerProps={{
+                                    className: "min-w-0",
+                                }}
+                                {...register("mobileNumber", { required: true })}
+                            />
+                            {errors.streetAddress && <span className="text-red-500">This field is required</span>}
+                        </div>
+                    </div>
+                    {/* street and city field */}
                     <div className="mb-1 flex gap-6">
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
-                                Gender
+                                Street Address
                             </Typography>
                             <Input
                                 size="lg"
@@ -65,14 +168,13 @@ const Form = () => {
                                 labelProps={{
                                     className: "before:content-none after:content-none",
                                 }}
-                                {...register("name", { required: true })}
+                                {...register("streetAddress", { required: true })}
                             />
-                            {errors.email && <span className="text-red-500">This field is required</span>}
-
+                            {errors.streetAddress && <span className="text-red-500">This field is required</span>}
                         </div>
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
-                                Your Email
+                                City
                             </Typography>
                             <Input
                                 size="lg"
@@ -81,28 +183,32 @@ const Form = () => {
                                 labelProps={{
                                     className: "before:content-none after:content-none",
                                 }}
-                                {...register("email", { required: true })}
+                                {...register("city", { required: true })}
                             />
+                            {errors.city && <span className="text-red-500">This field is required</span>}
+
                         </div>
                     </div>
+                    {/* previous school name */}
                     <div className="mb-1 flex gap-6">
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
-                                Your Name
+                                Previous School Name
                             </Typography>
                             <Input
                                 size="lg"
-                                placeholder="name@mail.com"
+                                placeholder="Previous School Name"
                                 className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                                 labelProps={{
                                     className: "before:content-none after:content-none",
                                 }}
-                                {...register("name", { required: true })}
+                                {...register("previousSchool", { required: true })}
                             />
+                            {errors.previousSchool && <span className="text-red-500">This field is required</span>}
                         </div>
                         <div>
                             <Typography variant="h6" color="blue-gray" className="mb-1">
-                                Your Email
+                                City
                             </Typography>
                             <Input
                                 size="lg"
@@ -111,8 +217,10 @@ const Form = () => {
                                 labelProps={{
                                     className: "before:content-none after:content-none",
                                 }}
-                                {...register("email", { required: true })}
+                                {...register("city", { required: true })}
                             />
+                            {errors.city && <span className="text-red-500">This field is required</span>}
+
                         </div>
                     </div>
                     <Checkbox
